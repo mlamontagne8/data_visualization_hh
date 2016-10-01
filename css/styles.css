@@ -1,0 +1,14 @@
+h1 {
+    font-size: 30px;
+    color: Green;
+}
+
+p {
+    background-color: lightpink;
+    float: left;
+    width: 300px;
+}
+
+footer {
+    float: left;
+}
