@@ -25,8 +25,7 @@ bar.append("text")
     .attr("y", barHeight / 2)
     .attr("dy", ".35em")
     .text(function(d) { return d; });*/
-var data = [];
-var dates = [];
+/*var dates = [];
 var weatherData = [];
 
 function parseData() {
@@ -36,6 +35,7 @@ function parseData() {
             dates[i] = parse(data[0].date);
         }
         console.log("In function call: " + dates[0]);
+        console.log(data[0].city);
         for (i = 0; i < data.length; i++) {
             weatherData[i] = data[i];
         }
@@ -45,7 +45,7 @@ function parseData() {
 function display() {
     parseData();
 }
-
+*/
 var m = [20, 20, 30, 20],
     w = 960 - m[1] - m[3],
     h = 500 - m[0] - m[2];
@@ -86,7 +86,6 @@ var area = d3.svg.area()
 
 d3.csv("data/us-weather-history/KNYC.csv", function(data) {
     var parse = d3.time.format("%Y-%m-%-d").parse;
-
     // Nest stock values by symbol.
     symbols = d3.nest()
         .key(function(d) { return d.city; })
@@ -276,21 +275,21 @@ function stackedArea() {
         .values(function(d) { return d.values; })
         .x(function(d) { return d.date; })
         .y(function(d) { return d.actual_mean_temp; })
-        .out(function(d, y0, y) { d.price0 = y0; })
+        .out(function(d, y0, y) { d.actual_mean_temp0 = y0; })
         .order("reverse");
 
     stack(symbols);
 
     y
-        .domain([0, d3.max(symbols[0].values.map(function(d) { return d.actual_mean_temp + d.price0; }))])
+        .domain([0, d3.max(symbols[0].values.map(function(d) { return d.actual_mean_temp + d.actual_mean_temp0; }))])
         .range([h, 0]);
 
     line
-        .y(function(d) { return y(d.price0); });
+        .y(function(d) { return y(d.actual_mean_temp0); });
 
     area
-        .y0(function(d) { return y(d.price0); })
-        .y1(function(d) { return y(d.price0 + d.actual_mean_temp); });
+        .y0(function(d) { return y(d.actual_mean_temp0); })
+        .y1(function(d) { return y(d.actual_mean_temp0 + d.actual_mean_temp); });
 
     var t = svg.selectAll(".symbol").transition()
         .duration(duration)
@@ -305,7 +304,7 @@ function stackedArea() {
         .attr("d", function(d) { return line(d.values); });
 
     t.select("text")
-        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.actual_mean_temp / 2 + d.price0) + ")"; });
+        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.actual_mean_temp / 2 + d.actual_mean_temp0) + ")"; });
 
     setTimeout(streamgraph, duration + delay);
 }
@@ -315,14 +314,14 @@ function streamgraph() {
         .values(function(d) { return d.values; })
         .x(function(d) { return d.date; })
         .y(function(d) { return d.actual_mean_temp; })
-        .out(function(d, y0, y) { d.price0 = y0; })
+        .out(function(d, y0, y) { d.actual_mean_temp0 = y0; })
         .order("reverse")
         .offset("wiggle");
 
     stack(symbols);
 
     line
-        .y(function(d) { return y(d.price0); });
+        .y(function(d) { return y(d.actual_mean_temp0); });
 
     var t = svg.selectAll(".symbol").transition()
         .duration(duration);
@@ -335,7 +334,7 @@ function streamgraph() {
         .attr("d", function(d) { return line(d.values); });
 
     t.select("text")
-        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.actual_mean_temp / 2 + d.price0) + ")"; });
+        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.actual_mean_temp / 2 + d.actual_mean_temp0) + ")"; });
 
     setTimeout(overlappingArea, duration + delay);
 }
@@ -344,7 +343,7 @@ function overlappingArea() {
     var g = svg.selectAll(".symbol");
 
     line
-        .y(function(d) { return y(d.price0 + d.actual_mean_temp); });
+        .y(function(d) { return y(d.actual_mean_temp0 + d.actual_mean_temp); });
 
     g.select(".line")
         .attr("d", function(d) { return line(d.values); });
@@ -436,7 +435,7 @@ function stackedBar() {
         .values(function(d) { return d.values; })
         .x(function(d) { return d.date; })
         .y(function(d) { return d.actual_mean_temp; })
-        .out(function(d, y0, y) { d.price0 = y0; })
+        .out(function(d, y0, y) { d.actual_mean_temp0 = y0; })
         .order("reverse");
 
     var g = svg.selectAll(".symbol");
@@ -444,7 +443,7 @@ function stackedBar() {
     stack(symbols);
 
     y
-        .domain([0, d3.max(symbols[0].values.map(function(d) { return d.actual_mean_temp + d.price0; }))])
+        .domain([0, d3.max(symbols[0].values.map(function(d) { return d.actual_mean_temp + d.actual_mean_temp0; }))])
         .range([h, 0]);
 
     var t = g.transition()
@@ -452,11 +451,11 @@ function stackedBar() {
 
     t.select("text")
         .delay(symbols[0].values.length * 10)
-        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.actual_mean_temp / 2 + d.price0) + ")"; });
+        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.actual_mean_temp / 2 + d.actual_mean_temp0) + ")"; });
 
     t.selectAll("rect")
         .delay(function(d, i) { return i * 10; })
-        .attr("y", function(d) { return y(d.price0 + d.actual_mean_temp); })
+        .attr("y", function(d) { return y(d.actual_mean_temp0 + d.actual_mean_temp); })
         .attr("height", function(d) { return h - y(d.actual_mean_temp); })
         .each("end", function() {
             d3.select(this)
@@ -478,12 +477,14 @@ function transposeBar() {
         .rangeRoundBands([0, w], .2);
 
     y
-        .domain([0, d3.max(symbols.map(function(d) { return d3.sum(d.values.map(function(d) { return d.actual_mean_temp; })); }))]);
+        .domain([0, d3.max(symbols.map(function(d) {
+            return d3.sum(d.values.map(function(d) { return d.actual_mean_temp; }));
+        }))]);
 
     var stack = d3.layout.stack()
         .x(function(d, i) { return i; })
         .y(function(d) { return d.actual_mean_temp; })
-        .out(function(d, y0, y) { d.price0 = y0; });
+        .out(function(d, y0, y) { d.actual_mean_temp0 = y0; });
 
     stack(d3.zip.apply(null, symbols.map(function(d) { return d.values; }))); // transpose!
 
@@ -494,7 +495,7 @@ function transposeBar() {
 
     t.selectAll("rect")
         .delay(function(d, i) { return i * 10; })
-        .attr("y", function(d) { return y(d.price0 + d.actual_mean_temp) - 1; })
+        .attr("y", function(d) { return y(d.actual_mean_temp0 + d.actual_mean_temp) - 1; })
         .attr("height", function(d) { return h - y(d.actual_mean_temp) + 1; })
         .attr("x", function(d) { return x(d.symbol); })
         .attr("width", x.rangeBand())
