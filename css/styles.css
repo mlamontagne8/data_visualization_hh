@@ -1,9 +1,17 @@
-#blah {}
-
 .col-md-6 p {
     background-color: grey;
     font-size: 25px;
     width: 400px;
+}
+
+.chart rect {
+    fill: steelblue;
+}
+
+.chart text {
+    fill: white;
+    font: 10px sans-serif;
+    text-anchor: end;
 }
 
 #foot1 {

@@ -3,7 +3,7 @@
 
 <head>
     <title>Data visualization website Matthew and Jason 10/1/2016</title>
-
+    <script src="https://d3js.org/d3.v4.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/styles.css" />
 </head>
@@ -20,10 +20,14 @@
             our graph below to interact with our chart!</p>
     </div <br>
     <div class="col-md-6">
-        <img src="img/DataVis.png" alt="Mountain View" style="width:500px;height:350px;"></div>
+        <!---TODO: remove onclick--->
+        <img onclick="display()" src="img/DataVis.png" alt="Mountain View" style="width:500px;height:350px;"></div>
+    <svg class="chart"></svg>
+    </div>
 </body>
+
 <footer id="foot1">
     <a href="ps://github.com/d3/d3/wiki/API-Reference">This is the website that contains the W3 API</a></footer>
-<script src="js/h2data.js"></script>
+<script src="js/dataVis.js"></script>
 
 </html>
