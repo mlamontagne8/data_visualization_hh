@@ -31,25 +31,17 @@ var weatherData = [];
 
 function parseData() {
     d3.csv("data/us-weather-history/KNYC.csv", function(data) {
-        console.log("Object data: " + data[0] + data.length);
-        //var parse = d3.time.format("%Y-%b-%-d").parse;
-        //dates[0] = parse(data[0].date);
+        var parse = d3.timeParse("%Y-%m-%-d");
+        for (i = 0; i < data.length; i++) {
+            dates[i] = parse(data[0].date);
+        }
+        console.log("In function call: " + dates[0]);
         for (i = 0; i < data.length; i++) {
             weatherData[i] = data[i];
         }
-        // for (i = 0; i < weatherData.length; i++) {
-
-        // }
-        console.log("Object weather: " + weatherData[0] + data.length);
     });
-    console.log("Outside of csv call " + weatherData[0].date);
-    alert(weatherData[0].date);
 }
-
-
-//var date = [];
 
 function display() {
     parseData();
-    //alert(data[0].date);
 }
