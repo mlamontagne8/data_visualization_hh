@@ -25,19 +25,25 @@ bar.append("text")
     .attr("y", barHeight / 2)
     .attr("dy", ".35em")
     .text(function(d) { return d; });*/
+var data = [];
 var dates = [];
 var weatherData = [];
 
 function parseData() {
     d3.csv("data/us-weather-history/KNYC.csv", function(data) {
-        var parse = d3.time.format("%Y-%b-%-d").parse;
+        console.log("Object data: " + data[0] + data.length);
+        //var parse = d3.time.format("%Y-%b-%-d").parse;
+        //dates[0] = parse(data[0].date);
         for (i = 0; i < data.length; i++) {
             weatherData[i] = data[i];
         }
-        for (i = 0; i < weatherData.length; i++) {
-            dates[i] = parse(weatherData[i].date);
-        }
+        // for (i = 0; i < weatherData.length; i++) {
+
+        // }
+        console.log("Object weather: " + weatherData[0] + data.length);
     });
+    console.log("Outside of csv call " + weatherData[0].date);
+    alert(weatherData[0].date);
 }
 
 
@@ -45,5 +51,5 @@ function parseData() {
 
 function display() {
     parseData();
-    alert(dates.length);
+    //alert(data[0].date);
 }
