@@ -89,7 +89,7 @@ d3.csv("data/us-weather-history/KNYC.csv", function(data) {
 
     // Nest stock values by symbol.
     symbols = d3.nest()
-        .key(function(d) { return "KNYC"; })
+        .key(function(d) { return d.city; })
         .entries(city = data);
 
     // Parse dates and numbers. We assume values are sorted by date.
@@ -99,8 +99,8 @@ d3.csv("data/us-weather-history/KNYC.csv", function(data) {
             d.date = parse(d.date);
             d.actual_mean_temp = +d.actual_mean_temp;
         });
-        s.maxactual_mean_temp = d3.max(s.values, function(d) { return d.actual_mean_temp; });
-        s.sumactual_mean_temp = d3.sum(s.values, function(d) { return d.actual_mean_temp; });
+        s.maxPrice = d3.max(s.values, function(d) { return d.actual_mean_temp; });
+        s.sumPrice = d3.sum(s.values, function(d) { return d.actual_mean_temp; });
     });
 
     // Sort by maximum actual_mean_temp, descending.
@@ -155,7 +155,7 @@ function lines() {
 
             e.selectAll("circle, text")
                 .data(function(d) { return [d.values[k], d.values[k]]; })
-                .attr("transform", function(d) { return "translate(" + x(d.date) + "," + y(d.price) + ")"; });
+                .attr("transform", function(d) { return "translate(" + x(d.date) + "," + y(d.actual_mean_temp) + ")"; });
         });
     }
 
@@ -275,14 +275,14 @@ function stackedArea() {
     var stack = d3.layout.stack()
         .values(function(d) { return d.values; })
         .x(function(d) { return d.date; })
-        .y(function(d) { return d.price; })
+        .y(function(d) { return d.actual_mean_temp; })
         .out(function(d, y0, y) { d.price0 = y0; })
         .order("reverse");
 
     stack(symbols);
 
     y
-        .domain([0, d3.max(symbols[0].values.map(function(d) { return d.price + d.price0; }))])
+        .domain([0, d3.max(symbols[0].values.map(function(d) { return d.actual_mean_temp + d.price0; }))])
         .range([h, 0]);
 
     line
@@ -290,7 +290,7 @@ function stackedArea() {
 
     area
         .y0(function(d) { return y(d.price0); })
-        .y1(function(d) { return y(d.price0 + d.price); });
+        .y1(function(d) { return y(d.price0 + d.actual_mean_temp); });
 
     var t = svg.selectAll(".symbol").transition()
         .duration(duration)
@@ -305,7 +305,7 @@ function stackedArea() {
         .attr("d", function(d) { return line(d.values); });
 
     t.select("text")
-        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.price / 2 + d.price0) + ")"; });
+        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.actual_mean_temp / 2 + d.price0) + ")"; });
 
     setTimeout(streamgraph, duration + delay);
 }
@@ -314,7 +314,7 @@ function streamgraph() {
     var stack = d3.layout.stack()
         .values(function(d) { return d.values; })
         .x(function(d) { return d.date; })
-        .y(function(d) { return d.price; })
+        .y(function(d) { return d.actual_mean_temp; })
         .out(function(d, y0, y) { d.price0 = y0; })
         .order("reverse")
         .offset("wiggle");
@@ -335,7 +335,7 @@ function streamgraph() {
         .attr("d", function(d) { return line(d.values); });
 
     t.select("text")
-        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.price / 2 + d.price0) + ")"; });
+        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.actual_mean_temp / 2 + d.price0) + ")"; });
 
     setTimeout(overlappingArea, duration + delay);
 }
@@ -344,7 +344,7 @@ function overlappingArea() {
     var g = svg.selectAll(".symbol");
 
     line
-        .y(function(d) { return y(d.price0 + d.price); });
+        .y(function(d) { return y(d.price0 + d.actual_mean_temp); });
 
     g.select(".line")
         .attr("d", function(d) { return line(d.values); });
@@ -355,10 +355,10 @@ function overlappingArea() {
 
     area
         .y0(h)
-        .y1(function(d) { return y(d.price); });
+        .y1(function(d) { return y(d.actual_mean_temp); });
 
     line
-        .y(function(d) { return y(d.price); });
+        .y(function(d) { return y(d.actual_mean_temp); });
 
     var t = g.transition()
         .duration(duration);
@@ -373,7 +373,7 @@ function overlappingArea() {
 
     t.select("text")
         .attr("dy", ".31em")
-        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.price) + ")"; });
+        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.actual_mean_temp) + ")"; });
 
     svg.append("line")
         .attr("class", "line")
@@ -416,9 +416,9 @@ function groupedBar() {
             .data(function(d) { return d.values; })
             .enter().append("rect")
             .attr("x", function(d) { return x(d.date) + x1(p.key); })
-            .attr("y", function(d) { return y(d.price); })
+            .attr("y", function(d) { return y(d.actual_mean_temp); })
             .attr("width", x1.rangeBand())
-            .attr("height", function(d) { return h - y(d.price); })
+            .attr("height", function(d) { return h - y(d.actual_mean_temp); })
             .style("fill", color(p.key))
             .style("fill-opacity", 1e-6)
             .transition()
@@ -435,7 +435,7 @@ function stackedBar() {
     var stack = d3.layout.stack()
         .values(function(d) { return d.values; })
         .x(function(d) { return d.date; })
-        .y(function(d) { return d.price; })
+        .y(function(d) { return d.actual_mean_temp; })
         .out(function(d, y0, y) { d.price0 = y0; })
         .order("reverse");
 
@@ -444,7 +444,7 @@ function stackedBar() {
     stack(symbols);
 
     y
-        .domain([0, d3.max(symbols[0].values.map(function(d) { return d.price + d.price0; }))])
+        .domain([0, d3.max(symbols[0].values.map(function(d) { return d.actual_mean_temp + d.price0; }))])
         .range([h, 0]);
 
     var t = g.transition()
@@ -452,12 +452,12 @@ function stackedBar() {
 
     t.select("text")
         .delay(symbols[0].values.length * 10)
-        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.price / 2 + d.price0) + ")"; });
+        .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.actual_mean_temp / 2 + d.price0) + ")"; });
 
     t.selectAll("rect")
         .delay(function(d, i) { return i * 10; })
-        .attr("y", function(d) { return y(d.price0 + d.price); })
-        .attr("height", function(d) { return h - y(d.price); })
+        .attr("y", function(d) { return y(d.price0 + d.actual_mean_temp); })
+        .attr("height", function(d) { return h - y(d.actual_mean_temp); })
         .each("end", function() {
             d3.select(this)
                 .style("stroke", "#fff")
@@ -478,11 +478,11 @@ function transposeBar() {
         .rangeRoundBands([0, w], .2);
 
     y
-        .domain([0, d3.max(symbols.map(function(d) { return d3.sum(d.values.map(function(d) { return d.price; })); }))]);
+        .domain([0, d3.max(symbols.map(function(d) { return d3.sum(d.values.map(function(d) { return d.actual_mean_temp; })); }))]);
 
     var stack = d3.layout.stack()
         .x(function(d, i) { return i; })
-        .y(function(d) { return d.price; })
+        .y(function(d) { return d.actual_mean_temp; })
         .out(function(d, y0, y) { d.price0 = y0; });
 
     stack(d3.zip.apply(null, symbols.map(function(d) { return d.values; }))); // transpose!
@@ -494,8 +494,8 @@ function transposeBar() {
 
     t.selectAll("rect")
         .delay(function(d, i) { return i * 10; })
-        .attr("y", function(d) { return y(d.price0 + d.price) - 1; })
-        .attr("height", function(d) { return h - y(d.price) + 1; })
+        .attr("y", function(d) { return y(d.price0 + d.actual_mean_temp) - 1; })
+        .attr("height", function(d) { return h - y(d.actual_mean_temp) + 1; })
         .attr("x", function(d) { return x(d.symbol); })
         .attr("width", x.rangeBand())
         .style("stroke-opacity", 1e-6);
