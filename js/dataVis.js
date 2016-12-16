@@ -424,14 +424,14 @@ function stackedBar() {
                 .style("stroke-opacity", 1);
         });
     console.log("END OF STACKED BAR");
-    setTimeout(donut, duration + symbols[0].values.length * 10 + delay);
+    setTimeout(transposeBar, duration + symbols[0].values.length * 10 + delay);
 }
 
 function transposeBar() {
     console.log("Beginning transpose");
 
     x
-        .domain(symbols.map(function(d) { return d.city; }))
+        .domain(symbols.map(function(d) { return d.key; }))
         .rangeRoundBands([0, w], .2);
 
     y
