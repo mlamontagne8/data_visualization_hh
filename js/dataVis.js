@@ -424,7 +424,7 @@ function stackedBar() {
                 .style("stroke-opacity", 1);
         });
 
-    setTimeout(donut, duration + symbols[0].values.length * 10 + delay);
+    setTimeout(transposeBar, duration + symbols[0].values.length * 10 + delay);
 }
 
 function transposeBar() {
@@ -494,6 +494,8 @@ function donut() {
         .attr("y1", 2 * h)
         .attr("y2", 2 * h)
         .remove();
+
+        console.log("MIDDLE OF DONUT");
 
     function arcTween(d) {
         var path = d3.select(this),
