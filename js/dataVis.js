@@ -5,18 +5,17 @@ var m = [20, 20, 30, 20],
 var x,
     y,
     duration = 1500,
-    delay = 500;
+    delay = 500
+    city,
+    symbols;
 
-var color = d3.scale.category10();
+var color = d3.scale.category10c();
 
 var svg = d3.select("body").append("svg")
     .attr("width", w + m[1] + m[3])
     .attr("height", h + m[0] + m[2])
     .append("g")
     .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
-
-var city,
-    symbols;
 
 // A line generator, for the dark stroke.
 var line = d3.svg.line()
