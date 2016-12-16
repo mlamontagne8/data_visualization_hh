@@ -423,12 +423,12 @@ function stackedBar() {
                 .attr("width", x.rangeBand())
                 .style("stroke-opacity", 1);
         });
+    console.log("END OF STACKED BAR");
     setTimeout(transposeBar, duration + symbols[0].values.length * 10 + delay);
 }
 
 function transposeBar() {
     console.log("Beginning transpose");
-
     x
         .domain(symbols.map(function(d) { return d.key; }))
         .rangeRoundBands([0, w], .2);
