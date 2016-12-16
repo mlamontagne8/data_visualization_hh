@@ -424,11 +424,11 @@ function stackedBar() {
                 .style("stroke-opacity", 1);
         });
     console.log("END OF STACKED BAR");
-    setTimeout(transposeBar, duration + symbols[0].values.length * 10 + delay);
+    setTimeout(donut, duration + symbols[0].values.length * 10 + delay);
 }
 
 function transposeBar() {
-        console.log("Beginning transpose");
+    console.log("Beginning transpose");
     x
         .domain(symbols.map(function(d) { return d.key; }))
         .rangeRoundBands([0, w], .2);
@@ -466,12 +466,12 @@ function transposeBar() {
         .duration(duration)
         .attr("x2", w);
 
+    console.log("END of transpose");
     setTimeout(donut, duration / 2 + symbols[0].values.length * 10 + delay);
-        console.log("END of transpose");
 }
 
 function donut() {
-        console.log("beginning of donut");
+    console.log("beginning of donut");
     var g = svg.selectAll(".symbol");
 
     g.selectAll("rect").remove();
@@ -500,7 +500,7 @@ function donut() {
 
 
     function arcTween(d) {
-            console.log("Beginning of arctween");
+        console.log("Beginning of arctween");
         var path = d3.select(this),
             text = d3.select(this.parentNode.appendChild(this.previousSibling)),
             x0 = x(d.data.key),
@@ -522,7 +522,7 @@ function donut() {
             path.attr("d", arc(f));
             text.attr("transform", "translate(" + arc.centroid(f) + ")translate(" + xx + "," + yy + ")rotate(" + ((f.startAngle + f.endAngle) / 2 + 3 * Math.PI / 2) * 180 / Math.PI + ")");
         };
-            console.log("ENd of arctween");
+        console.log("ENd of arctween");
     }
 
     console.log("END OF donut");
@@ -530,7 +530,7 @@ function donut() {
 }
 
 function donutExplode() {
-        console.log("beginning of donut exploode");
+    console.log("beginning of donut exploode");
     var r0a = h / 2 - x.rangeBand() / 2,
         r1a = h / 2,
         r0b = 2 * h - x.rangeBand() / 2,
