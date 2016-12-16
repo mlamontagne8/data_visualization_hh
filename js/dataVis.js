@@ -426,11 +426,12 @@ function stackedBar() {
     console.log("END OF STACKED BAR");
     setTimeout(donut, duration + symbols[0].values.length * 10 + delay);
 }
-/*
+
 function transposeBar() {
     console.log("Beginning transpose");
+
     x
-        .domain(symbols.map(function(d) { return d.key; }))
+        .domain(symbols.map(function(d) { return d.city; }))
         .rangeRoundBands([0, w], .2);
 
     y
@@ -469,7 +470,7 @@ function transposeBar() {
     console.log("END of transpose");
     setTimeout(donut, duration / 2 + symbols[0].values.length * 10 + delay);
 }
-*/
+
 function donut() {
     console.log("beginning of donut");
     var g = svg.selectAll(".symbol");
