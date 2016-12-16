@@ -424,7 +424,7 @@ function stackedBar() {
                 .style("stroke-opacity", 1);
         });
 
-    setTimeout(transposeBar, duration + symbols[0].values.length * 10 + delay);
+    setTimeout(donut, duration + symbols[0].values.length * 10 + delay);
 }
 
 function transposeBar() {
