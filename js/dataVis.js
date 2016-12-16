@@ -423,7 +423,6 @@ function stackedBar() {
                 .attr("width", x.rangeBand())
                 .style("stroke-opacity", 1);
         });
-    console.log("END OF STACKED BAR");
     setTimeout(transposeBar, duration + symbols[0].values.length * 10 + delay);
 }
 
