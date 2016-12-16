@@ -39,7 +39,7 @@ var area = d3.svg.area()
 
 d3.csv("data/us-weather-history/weatherData.csv", function(data) {
     var parse = d3.time.format("%Y-%m-%-d").parse;
-    // Nest stock values by symbol.
+    // Nest weather data by city.
     symbols = d3.nest()
         .key(function(d) { return d.city; })
         .entries(city = data);
