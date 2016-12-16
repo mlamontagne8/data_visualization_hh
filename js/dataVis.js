@@ -1,5 +1,5 @@
 // Variable instantiation
-var m = [10, 10, 50, 10],
+var m = [20, 20, 30, 20],
     w = 960 - m[1] - m[3],
     h = 500 - m[0] - m[2],
     x,
