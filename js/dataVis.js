@@ -423,7 +423,7 @@ function stackedBar() {
                 .attr("width", x.rangeBand())
                 .style("stroke-opacity", 1);
         });
-
+    console.log("END OF STACKED BAR");
     setTimeout(transposeBar, duration + symbols[0].values.length * 10 + delay);
 }
 
@@ -495,7 +495,6 @@ function donut() {
         .attr("y2", 2 * h)
         .remove();
 
-        console.log("MIDDLE OF DONUT");
 
     function arcTween(d) {
         var path = d3.select(this),
