@@ -342,6 +342,8 @@ function overlappingArea() {
 }
 
 function groupedBar() {
+        console.log("grouped bar");
+
     x = d3.scale.ordinal()
         .domain(symbols[0].values.map(function(d) { return d.date; }))
         .rangeBands([0, w - 60], .1);
@@ -382,6 +384,7 @@ function groupedBar() {
 }
 
 function stackedBar() {
+    console.log("stacked bar");
     x.rangeRoundBands([0, w - 60], .1);
 
     var stack = d3.layout.stack()
@@ -425,6 +428,8 @@ function stackedBar() {
 }
 
 function transposeBar() {
+        console.log("transpose bar");
+
     x
         .domain(symbols.map(function(d) { return d.key; }))
         .rangeRoundBands([0, w], .2);
