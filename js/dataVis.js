@@ -342,7 +342,7 @@ function overlappingArea() {
 }
 
 function groupedBar() {
-        console.log("grouped bar");
+    console.log("grouped bar");
 
     x = d3.scale.ordinal()
         .domain(symbols[0].values.map(function(d) { return d.date; }))
@@ -428,7 +428,7 @@ function stackedBar() {
 }
 
 function transposeBar() {
-        console.log("transpose bar");
+    console.log("transpose bar");
 
     x
         .domain(symbols.map(function(d) { return d.key; }))
