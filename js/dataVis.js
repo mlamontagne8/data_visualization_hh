@@ -6,10 +6,10 @@ var x,
     y,
     duration = 1500,
     delay = 500
-    city,
-    symbols;
+city,
+symbols;
 
-var color = d3.scale.category10c();
+var color = d3.scale.category20c();
 
 var svg = d3.select("body").append("svg")
     .attr("width", w + m[1] + m[3])
