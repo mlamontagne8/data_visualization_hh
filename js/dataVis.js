@@ -466,8 +466,8 @@ function transposeBar() {
         .duration(duration)
         .attr("x2", w);
 
-    console.log("END of transpose");
     setTimeout(donut, duration / 2 + symbols[0].values.length * 10 + delay);
+    console.log("END of transpose");
 }
 
 function donut() {
