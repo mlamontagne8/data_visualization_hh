@@ -2,9 +2,9 @@
 var m = [20, 20, 30, 20],
     w = 960 - m[1] - m[3],
     h = 500 - m[0] - m[2],
-x,
-y,
-duration = 1500,
+    x,
+    y,
+    duration = 1500,
     delay = 500,
     city,
     symbols;
