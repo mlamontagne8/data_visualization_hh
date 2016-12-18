@@ -58,6 +58,9 @@ d3.csv("data/us-weather-history/weatherData.csv", function(data) {
     // Sort by maximum actual_mean_temp, descending.
     symbols.sort(function(a, b) { return b.maxactual_mean_temp - a.maxactual_mean_temp; });
 
+    // Creates a Variable
+    // Enter, update, exit
+    // Select all (something that doesn't exist yet, give it attributes, then exit)
     var g = svg.selectAll("g")
         .data(symbols)
         .enter().append("g")
