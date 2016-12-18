@@ -436,8 +436,6 @@ function transposeBar() {
         .domain(symbols.map(function(d) { return d.key; }))
         .rangeRoundBands([0, w], .2);
 
-    console.log(x.domain())
-
     y
         .domain([0, d3.max(symbols.map(function(d) { return d3.sum(d.values.map(function(d) { return d.actual_mean_temp; })); }))]);
 
@@ -457,7 +455,8 @@ function transposeBar() {
         .delay(function(d, i) { return i * 10; })
         .attr("y", function(d) { return y(d.actual_mean_temp0 + d.actual_mean_temp) - 1; })
         .attr("height", function(d) { return h - y(d.actual_mean_temp) + 1; })
-        .attr("x", function(d) { return x(d.symbol); })
+        .attr("x", function(d) { console.log(d.symbol);
+            console.log(x(d.symbol)); return x(d.symbol); })
         .attr("width", x.rangeBand())
         .style("stroke-opacity", 1e-6);
 
