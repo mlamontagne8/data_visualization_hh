@@ -436,6 +436,8 @@ function transposeBar() {
         .domain(symbols.map(function(d) { return d.key; }))
         .rangeRoundBands([0, w], .2);
 
+    console.log(x.domain)
+
     y
         .domain([0, d3.max(symbols.map(function(d) { return d3.sum(d.values.map(function(d) { return d.actual_mean_temp; })); }))]);
 
