@@ -457,7 +457,7 @@ function transposeBar() {
         .attr("height", function(d) { return h - y(d.actual_mean_temp) + 1; })
         //.attr("x", function(d) { console.log(d.symbol);
         //    console.log(x(d.symbol)); return x(d.symbol); })
-        .attr("x", function(d) { return x(d.key); })
+        .attr("x", function(d) { return x(d.city); })
         .attr("width", x.rangeBand())
         .style("stroke-opacity", 1e-6);
 
