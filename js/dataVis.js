@@ -1,51 +1,65 @@
+/*
+Oct 2016, Updated December 2016
+Started at Northeastern University Husky Hacks 2
+Authors: Jason Booth, Matthew Lamontagne
+
+The template for this code was taken from http://bl.ocks.org/mbostock/1256572
+Adjusting the code required alterations for accepting new types and amounts
+of data, changing the parsing algorithm, and learning how D3 works. 
+D3 works with the following paradigm: Enter, update, exit. In this code each 
+visualization function creates variables, updates them with attributes, and
+exits them with a timeout. The timeout specifies the time spent in transition
+and calls the next function. This program visualizes the temperature for 4
+cities over the span of a year from July 2014-June 2015.
+*/
+
 var m = [20, 20, 30, 20],
     w = 960 - m[1] - m[3],
-    h = 500 - m[0] - m[2];
-
-var x,
+    h = 500 - m[0] - m[2],
+    x,
     y,
     duration = 1500,
-    delay = 500;
+    delay = 500,
+    city,
+    cities;
 
+// Sets color scheme
 var color = d3.scale.category10();
 
+// svg specifies the space where the visualization will happen
 var svg = d3.select("body").append("svg")
     .attr("width", w + m[1] + m[3])
     .attr("height", h + m[0] + m[2])
     .append("g")
     .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
-var city,
-    symbols;
-
-// A line generator, for the dark stroke.
 var line = d3.svg.line()
     .interpolate("basis")
     .x(function(d) { return x(d.date); })
     .y(function(d) { return y(d.actual_mean_temp); });
 
-// A line generator, for the dark stroke.
 var axis = d3.svg.line()
     .interpolate("basis")
     .x(function(d) { return x(d.date); })
     .y(h);
 
-// A area generator, for the dark stroke.
 var area = d3.svg.area()
     .interpolate("basis")
     .x(function(d) { return x(d.date); })
     .y1(function(d) { return y(d.actual_mean_temp); });
 
+// Parse the date attributes of the data, formatted year-m-d,temp
 d3.csv("data/us-weather-history/weatherData.csv", function(data) {
     var parse = d3.time.format("%Y-%m-%-d").parse;
-    // Nest stock values by symbol.
-    symbols = d3.nest()
+
+    // Nest weather data by city.
+    cities = d3.nest()
         .key(function(d) { return d.city; })
         .entries(city = data);
 
     // Parse dates and numbers. We assume values are sorted by date.
-    // Also compute the maximum actual_mean_temp per symbol, needed for the y-domain.
-    symbols.forEach(function(s) {
+    // Also compute the maximum actual_mean_temp per city, needed for the y-domain.
+    cities.forEach(function(s) {
         s.values.forEach(function(d) {
             d.date = parse(d.date);
             d.actual_mean_temp = +d.actual_mean_temp;
@@ -54,25 +68,25 @@ d3.csv("data/us-weather-history/weatherData.csv", function(data) {
         s.sumPrice = d3.sum(s.values, function(d) { return d.actual_mean_temp; });
     });
 
-    // Sort by maximum actual_mean_temp, descending.
-    symbols.sort(function(a, b) { return b.maxactual_mean_temp - a.maxactual_mean_temp; });
+    cities.sort(function(a, b) { return b.maxactual_mean_temp - a.maxactual_mean_temp; });
 
     var g = svg.selectAll("g")
-        .data(symbols)
+        .data(cities)
         .enter().append("g")
         .attr("class", "symbol");
 
+    // Calls the lines function with the specified transition time
     setTimeout(lines, duration);
 });
 
 function lines() {
+
     x = d3.time.scale().range([0, w - 60]);
     y = d3.scale.linear().range([h / 4 - 20, 0]);
 
-    // Compute the minimum and maximum date across symbols.
     x.domain([
-        d3.min(symbols, function(d) { return d.values[0].date; }),
-        d3.max(symbols, function(d) { return d.values[d.values.length - 1].date; })
+        d3.min(cities, function(d) { return d.values[0].date; }),
+        d3.max(cities, function(d) { return d.values[d.values.length - 1].date; })
     ]);
 
     var g = svg.selectAll(".symbol")
@@ -111,7 +125,7 @@ function lines() {
     }
 
     var k = 1,
-        n = symbols[0].values.length;
+        n = cities[0].values.length;
     d3.timer(function() {
         draw(k);
         if ((k += 2) >= n - 1) {
@@ -230,10 +244,10 @@ function stackedArea() {
         .out(function(d, y0, y) { d.actual_mean_temp0 = y0; })
         .order("reverse");
 
-    stack(symbols);
+    stack(cities);
 
     y
-        .domain([0, d3.max(symbols[0].values.map(function(d) { return d.actual_mean_temp + d.actual_mean_temp0; }))])
+        .domain([0, d3.max(cities[0].values.map(function(d) { return d.actual_mean_temp + d.actual_mean_temp0; }))])
         .range([h, 0]);
 
     line
@@ -270,7 +284,7 @@ function streamgraph() {
         .order("reverse")
         .offset("wiggle");
 
-    stack(symbols);
+    stack(cities);
 
     line
         .y(function(d) { return y(d.actual_mean_temp0); });
@@ -301,7 +315,7 @@ function overlappingArea() {
         .attr("d", function(d) { return line(d.values); });
 
     y
-        .domain([0, d3.max(symbols.map(function(d) { return d.maxPrice; }))])
+        .domain([0, d3.max(cities.map(function(d) { return d.maxPrice; }))])
         .range([h, 0]);
 
     area
@@ -341,12 +355,14 @@ function overlappingArea() {
 }
 
 function groupedBar() {
+    console.log("grouped bar");
+
     x = d3.scale.ordinal()
-        .domain(symbols[0].values.map(function(d) { return d.date; }))
+        .domain(cities[0].values.map(function(d) { return d.date; }))
         .rangeBands([0, w - 60], .1);
 
     var x1 = d3.scale.ordinal()
-        .domain(symbols.map(function(d) { return d.key; }))
+        .domain(cities.map(function(d) { return d.key; }))
         .rangeBands([0, x.rangeBand()]);
 
     var g = svg.selectAll(".symbol");
@@ -381,6 +397,7 @@ function groupedBar() {
 }
 
 function stackedBar() {
+    console.log("stacked bar");
     x.rangeRoundBands([0, w - 60], .1);
 
     var stack = d3.layout.stack()
@@ -392,17 +409,17 @@ function stackedBar() {
 
     var g = svg.selectAll(".symbol");
 
-    stack(symbols);
+    stack(cities);
 
     y
-        .domain([0, d3.max(symbols[0].values.map(function(d) { return d.actual_mean_temp + d.actual_mean_temp0; }))])
+        .domain([0, d3.max(cities[0].values.map(function(d) { return d.actual_mean_temp + d.actual_mean_temp0; }))])
         .range([h, 0]);
 
     var t = g.transition()
         .duration(duration / 2);
 
     t.select("text")
-        .delay(symbols[0].values.length * 10)
+        .delay(cities[0].values.length * 10)
         .attr("transform", function(d) { d = d.values[d.values.length - 1]; return "translate(" + (w - 60) + "," + y(d.actual_mean_temp / 2 + d.actual_mean_temp0) + ")"; });
 
     t.selectAll("rect")
@@ -419,26 +436,25 @@ function stackedBar() {
                 .attr("width", x.rangeBand())
                 .style("stroke-opacity", 1);
         });
-
-    setTimeout(transposeBar, duration + symbols[0].values.length * 10 + delay);
+    console.log("END OF STACKED BAR");
+    setTimeout(transposeBar, duration + cities[0].values.length * 10 + delay);
 }
 
 function transposeBar() {
+    console.log("Beginning transpose");
     x
-        .domain(symbols.map(function(d) { return d.key; }))
+        .domain(cities.map(function(d) { return d.key; }))
         .rangeRoundBands([0, w], .2);
 
     y
-        .domain([0, d3.max(symbols.map(function(d) {
-            return d3.sum(d.values.map(function(d) { return d.actual_mean_temp; }));
-        }))]);
+        .domain([0, d3.max(cities.map(function(d) { return d3.sum(d.values.map(function(d) { return d.actual_mean_temp; })); }))]);
 
     var stack = d3.layout.stack()
         .x(function(d, i) { return i; })
         .y(function(d) { return d.actual_mean_temp; })
         .out(function(d, y0, y) { d.actual_mean_temp0 = y0; });
 
-    stack(d3.zip.apply(null, symbols.map(function(d) { return d.values; }))); // transpose!
+    stack(d3.zip.apply(null, cities.map(function(d) { return d.values; }))); // transpose!
 
     var g = svg.selectAll(".symbol");
 
@@ -449,7 +465,9 @@ function transposeBar() {
         .delay(function(d, i) { return i * 10; })
         .attr("y", function(d) { return y(d.actual_mean_temp0 + d.actual_mean_temp) - 1; })
         .attr("height", function(d) { return h - y(d.actual_mean_temp) + 1; })
-        .attr("x", function(d) { return x(d.symbol); })
+        //.attr("x", function(d) { console.log(d.symbol);
+        //    console.log(x(d.symbol)); return x(d.symbol); })
+        .attr("x", function(d) { return x(d.city); })
         .attr("width", x.rangeBand())
         .style("stroke-opacity", 1e-6);
 
@@ -463,10 +481,12 @@ function transposeBar() {
         .duration(duration)
         .attr("x2", w);
 
-    setTimeout(donut, duration / 2 + symbols[0].values.length * 10 + delay);
+    setTimeout(donut, duration / 2 + cities[0].values.length * 10 + delay);
+    console.log("END of transpose");
 }
 
 function donut() {
+    console.log("beginning of donut");
     var g = svg.selectAll(".symbol");
 
     g.selectAll("rect").remove();
@@ -478,7 +498,7 @@ function donut() {
 
     g.append("path")
         .style("fill", function(d) { return color(d.key); })
-        .data(function() { return pie(symbols); })
+        .data(function() { return pie(cities); })
         .transition()
         .duration(duration)
         .tween("arc", arcTween);
@@ -493,7 +513,9 @@ function donut() {
         .attr("y2", 2 * h)
         .remove();
 
+
     function arcTween(d) {
+        console.log("Beginning of arctween");
         var path = d3.select(this),
             text = d3.select(this.parentNode.appendChild(this.previousSibling)),
             x0 = x(d.data.key),
@@ -515,8 +537,10 @@ function donut() {
             path.attr("d", arc(f));
             text.attr("transform", "translate(" + arc.centroid(f) + ")translate(" + xx + "," + yy + ")rotate(" + ((f.startAngle + f.endAngle) / 2 + 3 * Math.PI / 2) * 180 / Math.PI + ")");
         };
+        console.log("ENd of arctween");
     }
 
+    console.log("END OF donut");
     setTimeout(donutExplode, duration + delay);
 }
 
@@ -557,7 +581,7 @@ function donutExplode() {
 
     setTimeout(function() {
         svg.selectAll("*").remove();
-        svg.selectAll("g").data(symbols).enter().append("g").attr("class", "symbol");
+        svg.selectAll("g").data(cities).enter().append("g").attr("class", "symbol");
         lines();
     }, duration);
 }
