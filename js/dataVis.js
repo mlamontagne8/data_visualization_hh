@@ -355,7 +355,6 @@ function overlappingArea() {
 }
 
 function groupedBar() {
-    console.log("grouped bar");
 
     x = d3.scale.ordinal()
         .domain(cities[0].values.map(function(d) { return d.date; }))
@@ -397,7 +396,7 @@ function groupedBar() {
 }
 
 function stackedBar() {
-    console.log("stacked bar");
+
     x.rangeRoundBands([0, w - 60], .1);
 
     var stack = d3.layout.stack()
@@ -436,12 +435,12 @@ function stackedBar() {
                 .attr("width", x.rangeBand())
                 .style("stroke-opacity", 1);
         });
-    console.log("END OF STACKED BAR");
+
     setTimeout(transposeBar, duration + cities[0].values.length * 10 + delay);
 }
 
 function transposeBar() {
-    console.log("Beginning transpose");
+
     x
         .domain(cities.map(function(d) { return d.key; }))
         .rangeRoundBands([0, w], .2);
@@ -454,7 +453,7 @@ function transposeBar() {
         .y(function(d) { return d.actual_mean_temp; })
         .out(function(d, y0, y) { d.actual_mean_temp0 = y0; });
 
-    stack(d3.zip.apply(null, cities.map(function(d) { return d.values; }))); // transpose!
+    stack(d3.zip.apply(null, cities.map(function(d) { return d.values; })));
 
     var g = svg.selectAll(".symbol");
 
@@ -465,8 +464,6 @@ function transposeBar() {
         .delay(function(d, i) { return i * 10; })
         .attr("y", function(d) { return y(d.actual_mean_temp0 + d.actual_mean_temp) - 1; })
         .attr("height", function(d) { return h - y(d.actual_mean_temp) + 1; })
-        //.attr("x", function(d) { console.log(d.symbol);
-        //    console.log(x(d.symbol)); return x(d.symbol); })
         .attr("x", function(d) { return x(d.city); })
         .attr("width", x.rangeBand())
         .style("stroke-opacity", 1e-6);
@@ -482,11 +479,10 @@ function transposeBar() {
         .attr("x2", w);
 
     setTimeout(donut, duration / 2 + cities[0].values.length * 10 + delay);
-    console.log("END of transpose");
+
 }
 
 function donut() {
-    console.log("beginning of donut");
     var g = svg.selectAll(".symbol");
 
     g.selectAll("rect").remove();
@@ -515,7 +511,6 @@ function donut() {
 
 
     function arcTween(d) {
-        console.log("Beginning of arctween");
         var path = d3.select(this),
             text = d3.select(this.parentNode.appendChild(this.previousSibling)),
             x0 = x(d.data.key),
@@ -537,10 +532,9 @@ function donut() {
             path.attr("d", arc(f));
             text.attr("transform", "translate(" + arc.centroid(f) + ")translate(" + xx + "," + yy + ")rotate(" + ((f.startAngle + f.endAngle) / 2 + 3 * Math.PI / 2) * 180 / Math.PI + ")");
         };
-        console.log("ENd of arctween");
+
     }
 
-    console.log("END OF donut");
     setTimeout(donutExplode, duration + delay);
 }
 
