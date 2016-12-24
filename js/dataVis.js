@@ -64,8 +64,8 @@ d3.csv("data/us-weather-history/weatherData.csv", function(data) {
             d.date = parse(d.date);
             d.actual_mean_temp = +d.actual_mean_temp;
         });
-        s.maxTemp = d3.max(s.values, function(d) { return d.actual_mean_temp; });
-        s.sumTemp = d3.sum(s.values, function(d) { return d.actual_mean_temp; });
+        s.maxPrice = d3.max(s.values, function(d) { return d.actual_mean_temp; });
+        s.sumPrice = d3.sum(s.values, function(d) { return d.actual_mean_temp; });
     });
 
     symbols.sort(function(a, b) { return b.maxactual_mean_temp - a.maxactual_mean_temp; });
@@ -113,7 +113,7 @@ function lines() {
     function draw(k) {
         g.each(function(d) {
             var e = d3.select(this);
-            y.domain([0, d.maxTemp]);
+            y.domain([0, d.maxPrice]);
 
             e.select("path")
                 .attr("d", function(d) { return line(d.values.slice(0, k + 1)); });
@@ -164,7 +164,7 @@ function horizons() {
         .attr("dy", "0em");
 
     g.each(function(d) {
-        y.domain([0, d.maxTemp]);
+        y.domain([0, d.maxPrice]);
 
         d3.select(this).selectAll(".area")
             .data(d3.range(3))
@@ -175,7 +175,7 @@ function horizons() {
             .style("fill", function(d, i) { return color(i); })
             .style("fill-opacity", 1e-6);
 
-        y.domain([0, d.maxTemp / 3]);
+        y.domain([0, d.maxPrice / 3]);
 
         d3.select(this).selectAll(".line").transition()
             .duration(duration)
@@ -202,7 +202,7 @@ function areas() {
         .attr("d", function(d) { return axis(d.values); });
 
     g.each(function(d) {
-        y.domain([0, d.maxTemp]);
+        y.domain([0, d.maxPrice]);
 
         d3.select(this).select(".line").transition()
             .duration(duration)
@@ -315,7 +315,7 @@ function overlappingArea() {
         .attr("d", function(d) { return line(d.values); });
 
     y
-        .domain([0, d3.max(symbols.map(function(d) { return d.maxTemp; }))])
+        .domain([0, d3.max(symbols.map(function(d) { return d.maxPrice; }))])
         .range([h, 0]);
 
     area
@@ -492,7 +492,7 @@ function donut() {
     g.selectAll("rect").remove();
 
     var pie = d3.layout.pie()
-        .value(function(d) { return d.sumTemp; });
+        .value(function(d) { return d.sumPrice; });
 
     var arc = d3.svg.arc();
 
@@ -519,7 +519,7 @@ function donut() {
         var path = d3.select(this),
             text = d3.select(this.parentNode.appendChild(this.previousSibling)),
             x0 = x(d.data.key),
-            y0 = h - y(d.data.sumTemp);
+            y0 = h - y(d.data.sumPrice);
 
         return function(t) {
             var r = h / 2 / Math.min(1, t + 1e-3),
