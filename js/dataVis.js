@@ -545,7 +545,6 @@ function donut() {
 }
 
 function donutExplode() {
-    console.log("beginning of donut exploode");
     var r0a = h / 2 - x.rangeBand() / 2,
         r1a = h / 2,
         r0b = 2 * h - x.rangeBand() / 2,
