@@ -1,4 +1,18 @@
-// Variable instantiation
+/*
+Oct 2016, Updated December 2016
+Started at Northeastern University Husky Hacks 2
+Authors: Jason Booth, Matthew Lamontagne
+
+The template for this code was taken from http://bl.ocks.org/mbostock/1256572
+Adjusting the code required alterations for accepting new types and amounts
+of data, changing the parsing algorithm, and learning how D3 works. 
+D3 works with the following paradigm: Enter, update, exit. In this code each 
+visualization function creates variables, updates them with attributes, and
+exits them with a timeout. The timeout specifies the time spent in transition
+and calls the next function. This program visualizes the temperature for 4
+cities over the span of a year from July 2014-June 2015.
+*/
+
 var m = [20, 20, 30, 20],
     w = 960 - m[1] - m[3],
     h = 500 - m[0] - m[2],
@@ -12,33 +26,32 @@ var m = [20, 20, 30, 20],
 // Sets color scheme
 var color = d3.scale.category10();
 
+// svg specifies the space where the visualization will happen
 var svg = d3.select("body").append("svg")
     .attr("width", w + m[1] + m[3])
     .attr("height", h + m[0] + m[2])
     .append("g")
     .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
-
-// A line generator, for the dark stroke.
 var line = d3.svg.line()
     .interpolate("basis")
     .x(function(d) { return x(d.date); })
     .y(function(d) { return y(d.actual_mean_temp); });
 
-// A line generator, for the dark stroke.
 var axis = d3.svg.line()
     .interpolate("basis")
     .x(function(d) { return x(d.date); })
     .y(h);
 
-// A area generator, for the dark stroke.
 var area = d3.svg.area()
     .interpolate("basis")
     .x(function(d) { return x(d.date); })
     .y1(function(d) { return y(d.actual_mean_temp); });
 
+// Parse the date attributes of the data, formatted year-m-d,temp
 d3.csv("data/us-weather-history/weatherData.csv", function(data) {
     var parse = d3.time.format("%Y-%m-%-d").parse;
+
     // Nest weather data by city.
     symbols = d3.nest()
         .key(function(d) { return d.city; })
@@ -55,25 +68,22 @@ d3.csv("data/us-weather-history/weatherData.csv", function(data) {
         s.sumPrice = d3.sum(s.values, function(d) { return d.actual_mean_temp; });
     });
 
-    // Sort by maximum actual_mean_temp, descending.
     symbols.sort(function(a, b) { return b.maxactual_mean_temp - a.maxactual_mean_temp; });
 
-    // Creates a Variable
-    // Enter, update, exit
-    // Select all (something that doesn't exist yet, give it attributes, then exit)
     var g = svg.selectAll("g")
         .data(symbols)
         .enter().append("g")
         .attr("class", "symbol");
 
+    // Calls the lines function with the specified transition time
     setTimeout(lines, duration);
 });
 
 function lines() {
+
     x = d3.time.scale().range([0, w - 60]);
     y = d3.scale.linear().range([h / 4 - 20, 0]);
 
-    // Compute the minimum and maximum date across symbols.
     x.domain([
         d3.min(symbols, function(d) { return d.values[0].date; }),
         d3.max(symbols, function(d) { return d.values[d.values.length - 1].date; })
