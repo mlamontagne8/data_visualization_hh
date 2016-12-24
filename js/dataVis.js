@@ -20,7 +20,7 @@ var m = [20, 20, 30, 20],
     y,
     duration = 1500,
     delay = 500,
-    cityData,
+    city,
     symbols;
 
 // Sets color scheme
@@ -54,8 +54,8 @@ d3.csv("data/us-weather-history/weatherData.csv", function(data) {
 
     // Nest weather data by city.
     symbols = d3.nest()
-        .key(function(d) { return d.cityData; })
-        .entries(cityData = data);
+        .key(function(d) { return d.city; })
+        .entries(city = data);
 
     // Parse dates and numbers. We assume values are sorted by date.
     // Also compute the maximum actual_mean_temp per symbol, needed for the y-domain.
