@@ -24,7 +24,7 @@ var m = [20, 20, 30, 20],
     cities;
 
 // Sets color scheme
-var color = d3.scale.category10();
+var color = d3.schemeCategory10;
 
 // svg specifies the space where the visualization will happen
 var svg = d3.select("body").append("svg")
